@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useRef, useEffect } from "react";
 import styled from 'styled-components';
 
 const CardContainer = styled.div`
   position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const CardContent = styled.div`
+  width: 90%;
   max-width: 800px;
+  max-height: 90%; /* Ensure the card does not overflow the screen */
   background-color: white;
-  border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  z-index: 1000;
+  overflow-y: auto; /* Enable scrolling if content is too tall */
+  position: relative;
 `;
 
 const Image = styled.img`
@@ -52,16 +62,39 @@ const CloseButton = styled.button`
   right: 10px;
 `;
 
+function useOutsideAlerter(ref, onClose) {
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        onClose(); // Close the ArtCard when clicked outside
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // Unbind the event listener on cleanup
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref, onClose]);
+}
+
 const ArtCard = ({ artwork, onClose }) => {
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef, onClose);
+
   return (
     <CardContainer>
-      <CloseButton onClick={onClose}>Close</CloseButton>
-      <Image src={artwork.primaryImage} alt={artwork.title} />
-      <Title>{artwork.title}</Title>
-      <Artist>{artwork.artistDisplayName || 'Unknown Artist'}</Artist>
-      <Description>{artwork.objectDate || 'Unknown Date'}</Description>
-      <Description>{artwork.medium || 'Unknown Medium'}</Description>
-      <Description>{artwork.dimensions || 'Unknown Dimensions'}</Description>
+      <CardContent ref={wrapperRef}>
+        <CloseButton onClick={onClose}>Close</CloseButton>
+        <Image src={artwork.primaryImage} alt={artwork.title} />
+        <Title>{artwork.title}</Title>
+        <Artist>{artwork.artistDisplayName || 'Unknown Artist'}</Artist>
+        <Description>{artwork.objectDate || 'Unknown Date'}</Description>
+        <Description>{artwork.medium || 'Unknown Medium'}</Description>
+        <Description>{artwork.dimensions || 'Unknown Dimensions'}</Description>
+      </CardContent>
     </CardContainer>
   );
 };
