@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ExhibitionGrid from "./ExhibitionsPage";
 import Form from "./Form";
+import UserProfile from "./UserProfile";
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ const HomePage = () => {
         setSearchRequest={setSearchTerm}
         setSearchedItem={setSearchTerm}
       />
+      <UserProfile/>
       <ExhibitionGrid searchTerm={searchTerm}/>
     </Container>
   );
