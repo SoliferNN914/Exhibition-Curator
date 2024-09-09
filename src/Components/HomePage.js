@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ExhibitionGrid from "./ExhibitionsPage";
 import Form from "./Form";
 import UserProfile from "./UserProfile";
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -31,12 +32,12 @@ const HomePage = () => {
       <Header>
         <Title>Exhibition Curator</Title>
       </Header>
+      <Link to="/profile">Profile</Link>
       <Form
         searchRequest={searchTerm}
         setSearchRequest={setSearchTerm}
         setSearchedItem={setSearchTerm}
       />
-      <UserProfile/>
       <ExhibitionGrid searchTerm={searchTerm}/>
     </Container>
   );

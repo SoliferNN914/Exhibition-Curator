@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { searchArtworks, fetchArtworkDetails } from '../Services/Api';
-import Form from "./Form";
 import ArtCard from './ArtCard';
 
 const GridContainer = styled.div`
@@ -20,7 +19,6 @@ const GridItem = styled.div`
   overflow: hidden;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
 `;
 
 const Image = styled.img`
@@ -39,7 +37,7 @@ const ExhibitionGrid = ({ searchTerm }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedArtwork, setSelectedArtwork] = useState(null); // Track selected artwork
+  const [selectedArtWork, setSelectedArtWork] = useState(null);
 
   useEffect(() => {
     if (searchTerm) {
@@ -47,35 +45,34 @@ const ExhibitionGrid = ({ searchTerm }) => {
         try {
           setLoading(true);
           setError(null);
-
-          // Step 1: Search for artworks based on the search term from the form
-          const objectIDs = await searchArtworks(searchTerm); 
-
+          const objectIDs = await searchArtworks(searchTerm);
           if (objectIDs.length === 0) {
             setArtworks([]);
             setError('No artworks found for the search term.');
             return;
           }
-
-          // Step 2: Fetch details for each artwork ID
           const artworkDetailsPromises = objectIDs.slice(0, 12).map(id => fetchArtworkDetails(id));
           const artworksData = await Promise.all(artworkDetailsPromises);
-
           setArtworks(artworksData);
-          
         } catch (error) {
           setError('Failed to fetch artworks');
         } finally {
           setLoading(false);
         }
       };
-
       loadArtworks();
     }
   }, [searchTerm]);
 
-  const handleArtworkClick = (artwork) => {
-    setSelectedArtwork(artwork);
+  const saveToExhibition = (artwork) => {
+    let exhibition = JSON.parse(sessionStorage.getItem('userExhibition')) || [];
+    exhibition.push(artwork);
+    sessionStorage.setItem('userExhibition', JSON.stringify(exhibition));
+    alert(`${artwork.title} added to your exhibition!`);
+  };
+
+  const handleArtWorkClick = (artwork) => {
+    setSelectedArtWork(artwork);
   };
 
   if (loading) {
@@ -88,24 +85,24 @@ const ExhibitionGrid = ({ searchTerm }) => {
 
   return (
     <>
-      {selectedArtwork ? (
-        // Show ArtCard when an artwork is clicked
-        <ArtCard artwork={selectedArtwork} onClose={() => setSelectedArtwork(null)} />
+    {selectedArtWork ? (
+      <ArtCard artwork={selectedArtWork} onClose={() => {setSelectedArtWork(null)}}/>
+    ) : (
+      <GridContainer>
+      {artworks.length > 0 ? (
+        artworks.map((artwork) => (
+          <GridItem key={artwork.objectID} onClick={() => handleArtWorkClick(artwork)}>
+            <Image src={artwork.primaryImageSmall} alt={artwork.title} />
+            <Title>{artwork.title}</Title>
+            <button onClick={() => saveToExhibition(artwork)}>Add to Exhibition</button>
+          </GridItem>
+        ))
       ) : (
-        <GridContainer>
-          {artworks.length > 0 ? (
-            artworks.map((artwork) => (
-              <GridItem key={artwork.objectID} onClick={() => handleArtworkClick(artwork)}>
-                <Image src={artwork.primaryImageSmall} alt={artwork.title} />
-                <Title>{artwork.title}</Title>
-              </GridItem>
-            ))
-          ) : (
-            <p>No artworks to display</p>
-          )}
-        </GridContainer>
+        <p>No artworks to display</p>
       )}
-    </>
+    </GridContainer>
+    )}
+  </>
   );
 };
 

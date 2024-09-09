@@ -80,6 +80,10 @@ function useOutsideAlerter(ref, onClose) {
   }, [ref, onClose]);
 }
 
+const handleLike = () => {
+  
+}
+
 const ArtCard = ({ artwork, onClose }) => {
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, onClose);
@@ -94,6 +98,7 @@ const ArtCard = ({ artwork, onClose }) => {
         <Description>{artwork.objectDate || 'Unknown Date'}</Description>
         <Description>{artwork.medium || 'Unknown Medium'}</Description>
         <Description>{artwork.dimensions || 'Unknown Dimensions'}</Description>
+        <button onClick={handleLike}>Like</button>
       </CardContent>
     </CardContainer>
   );
