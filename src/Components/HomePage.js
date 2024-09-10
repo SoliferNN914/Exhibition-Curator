@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ExhibitionGrid from "./ExhibitionsPage";
 import Form from "./Form";
-import UserProfile from "./UserProfile";
-import { Link } from 'react-router-dom';
+import ButtonLink from '../Helpers/helpers'
+import logo from '../Assets/Logo.webp';
 
 const Container = styled.div`
   display: flex;
@@ -17,28 +17,38 @@ const Header = styled.header`
   padding: 20px;
   background-color: #333;
   color: white;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Title = styled.h1`
-  margin: 0;
+  padding: 20px;
   font-size: 2.5rem;
+  flex: 1;
+`;
+
+const Logo = styled.img`
+  width: 100px;
+  height: auto;
 `;
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  
   return (
     <Container>
       <Header>
+        <Logo src={logo} alt="Logo" />
         <Title>Exhibition Curator</Title>
       </Header>
-      <Link to="/profile">Profile</Link>
+      <ButtonLink to='profile'>Profile</ButtonLink>
       <Form
         searchRequest={searchTerm}
         setSearchRequest={setSearchTerm}
         setSearchedItem={setSearchTerm}
       />
-      <ExhibitionGrid searchTerm={searchTerm}/>
+      <ExhibitionGrid searchTerm={searchTerm} />
     </Container>
   );
 };

@@ -1,3 +1,10 @@
+import styled from "styled-components";
+
+const form = styled.form`
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 5px;
+`;
 
 
 
@@ -13,8 +20,9 @@ export default function Form(props){
     };
 
 return (
+    <div>
     <form onSubmit={handleSumbit}>
-        <div id='form-container'>
+        <div>
             <label htmlFor="showSearch">Search for Art:</label>
             <input
             id="artSearch"
@@ -26,11 +34,12 @@ return (
             }}
             />
         </div>
-        <div id="button-container">
+        <div>
         <button>
         Search
         </button>
         </div>
     </form>
+    </div>
 )
 };
