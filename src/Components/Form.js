@@ -1,45 +1,77 @@
 import styled from "styled-components";
 
-const form = styled.form`
-  background-color: #f4f4f4;
-  padding: 20px;
-  border-radius: 5px;
+
+const FormContainer = styled.div`
+  margin: 20px;
 `;
 
 
+const StyledForm = styled.form`
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
 
-export default function Form(props){
-    const { searchRequest, setSearchRequest, searchedItem, setSearchedItem} = props;
 
-    const handleSumbit = (event) => {
-        event.preventDefault();
+const StyledLabel = styled.label`
+  font-size: 1.2rem;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+`;
 
-        setSearchedItem(searchRequest);
 
-        setSearchRequest('');
-    };
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+`;
 
-return (
-    <div>
-    <form onSubmit={handleSumbit}>
+
+const StyledButton = styled.button`
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #555;
+  }
+`;
+
+export default function Form(props) {
+  const { searchRequest, setSearchRequest, searchedItem, setSearchedItem } = props;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSearchedItem(searchRequest);
+    setSearchRequest('');
+  };
+
+  return (
+    <FormContainer>
+      <StyledForm onSubmit={handleSubmit}>
         <div>
-            <label htmlFor="showSearch">Search for Art:</label>
-            <input
+          <StyledLabel htmlFor="artSearch">Search for Art:</StyledLabel>
+          <StyledInput
             id="artSearch"
-            label="Search"
-            variant="outlined"
             value={searchRequest}
-            onChange={(event)=> {
-                setSearchRequest(event.target.value);
+            onChange={(event) => {
+              setSearchRequest(event.target.value);
             }}
-            />
+          />
         </div>
         <div>
-        <button>
-        Search
-        </button>
+          <StyledButton type="submit">Search</StyledButton>
         </div>
-    </form>
-    </div>
-)
-};
+      </StyledForm>
+    </FormContainer>
+  );
+}

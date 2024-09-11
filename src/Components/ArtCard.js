@@ -66,15 +66,12 @@ function useOutsideAlerter(ref, onClose) {
   useEffect(() => {
     function handleClickOutside(event) {
       if (ref.current && !ref.current.contains(event.target)) {
-        onClose(); // Close the ArtCard when clicked outside
+        onClose();
       }
     }
-
-    // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      // Unbind the event listener on cleanup
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref, onClose]);
