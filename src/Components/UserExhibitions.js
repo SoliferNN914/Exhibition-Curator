@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
+import img from '../Assets/Vault-background.jpg'
 
 const ExhibitionContainer = styled.div`
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  background-image: url(${img});
+  width: 100vw;
+  height: 100vh;
 `;
 
 const ExhibitionTitle = styled.h2`
@@ -57,6 +60,11 @@ const RemoveButton = styled.button`
   }
 `;
 
+const NoExhibition = styled.h3`
+text-align: center;
+
+`;
+
 export default function UserExhibitions() {
   const [exhibition, setExhibition] = useState([]);
 
@@ -74,9 +82,9 @@ export default function UserExhibitions() {
 
   return (
     <ExhibitionContainer>
-      <ExhibitionTitle>Your Saved Exhibition</ExhibitionTitle>
+      <ExhibitionTitle>Your Personal Vault of Saved Art</ExhibitionTitle>
       {exhibition.length === 0 ? (
-        <p>No artworks in your exhibition.</p>
+        <NoExhibition>Vault Empty</NoExhibition>
       ) : (
         <GridContainer>
           {exhibition.map((artwork) => (
