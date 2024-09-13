@@ -40,12 +40,12 @@ const ExhibitionGrid = ({ searchTerm }) => {
   const [selectedArtWork, setSelectedArtWork] = useState(null);
 
   useEffect(() => {
-    if (searchTerm) {
       const loadArtworks = async () => {
         try {
           setLoading(true);
           setError(null);
-          const objectIDs = await searchArtworks(searchTerm);
+          const defaultSearch = searchTerm || "Sword";
+          const objectIDs = await searchArtworks(defaultSearch);
           if (objectIDs.length === 0) {
             setArtworks([]);
             setError('No artworks found for the search term.');
@@ -61,7 +61,6 @@ const ExhibitionGrid = ({ searchTerm }) => {
         }
       };
       loadArtworks();
-    }
   }, [searchTerm]);
 
   const saveToExhibition = (artwork) => {

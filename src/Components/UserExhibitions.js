@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import img from '../Assets/Vault-background.jpg'
+//import img from '../Assets/Vault-background.jpg'
 
 const ExhibitionContainer = styled.div`
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background-image: url(${img});
   width: 100vw;
   height: 100vh;
 `;
