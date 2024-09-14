@@ -13,7 +13,7 @@ const ProfileContainer = styled.div`
 const Header = styled.header`
   width: 100%;
   padding: 20px;
-  background-color: #333;
+  background-color: #878E76;
   color: white;
   text-align: center;
   border-radius: 5px;

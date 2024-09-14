@@ -63,7 +63,9 @@ const ExhibitionGrid = ({ searchTerm }) => {
       loadArtworks();
   }, [searchTerm]);
 
-  const saveToExhibition = (artwork) => {
+  const saveToExhibition = (artwork, event) => {
+
+    event.stopPropagation();
     let exhibition = JSON.parse(sessionStorage.getItem('userExhibition')) || [];
     exhibition.push(artwork);
     sessionStorage.setItem('userExhibition', JSON.stringify(exhibition));
@@ -93,7 +95,7 @@ const ExhibitionGrid = ({ searchTerm }) => {
           <GridItem key={artwork.objectID} onClick={() => handleArtWorkClick(artwork)}>
             <Image src={artwork.primaryImageSmall} alt={artwork.title} />
             <Title>{artwork.title}</Title>
-            <button onClick={() => saveToExhibition(artwork)}>Add to Exhibition</button>
+            <button onClick={(event) => saveToExhibition(artwork, event)}>Add to Exhibition</button>
           </GridItem>
         ))
       ) : (
