@@ -1,14 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { searchArtworks, fetchArtworkDetails } from '../Services/Api';
 import ArtCard from './ArtCard';
+import chariotImage from "../Assets/Chariot.webp";
+
+const moveChariot = keyframes`
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+`;
+
+const Chariot = styled.img`
+  width: 100px;
+  height: auto;
+  animation: ${moveChariot} 2s linear infinite;
+`;
 
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
-  max-width: 1000px;
+  max-width: 80%;
   margin: 0 auto;
 `;
 
@@ -40,31 +63,32 @@ const ExhibitionGrid = ({ searchTerm }) => {
   const [selectedArtWork, setSelectedArtWork] = useState(null);
 
   useEffect(() => {
-      const loadArtworks = async () => {
-        try {
-          setLoading(true);
-          setError(null);
-          const defaultSearch = searchTerm || "Sword";
-          const objectIDs = await searchArtworks(defaultSearch);
-          if (objectIDs.length === 0) {
-            setArtworks([]);
-            setError('No artworks found for the search term.');
-            return;
-          }
-          const artworkDetailsPromises = objectIDs.slice(0, 12).map(id => fetchArtworkDetails(id));
-          const artworksData = await Promise.all(artworkDetailsPromises);
-          setArtworks(artworksData);
-        } catch (error) {
-          setError('Failed to fetch artworks');
-        } finally {
-          setLoading(false);
+    const loadArtworks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const defaultSearch = searchTerm || "Sword";
+        const objectIDs = await searchArtworks(defaultSearch);
+        if (objectIDs.length === 0) {
+          setArtworks([]);
+          setError('No artworks found for the search term.');
+          return;
         }
-      };
-      loadArtworks();
+        const artworkDetailsPromises = objectIDs.slice(0, 12).map(id => fetchArtworkDetails(id));
+        const artworksData = await Promise.all(artworkDetailsPromises);
+        setArtworks(artworksData);
+        console.log(artworksData);
+        
+      } catch (error) {
+        setError('Failed to fetch artworks');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadArtworks();
   }, [searchTerm]);
 
   const saveToExhibition = (artwork, event) => {
-
     event.stopPropagation();
     let exhibition = JSON.parse(sessionStorage.getItem('userExhibition')) || [];
     exhibition.push(artwork);
@@ -77,7 +101,11 @@ const ExhibitionGrid = ({ searchTerm }) => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <LoadingContainer>
+        <Chariot src={chariotImage} alt="Loading Chariot" />
+      </LoadingContainer>
+    );
   }
 
   if (error) {
@@ -86,24 +114,24 @@ const ExhibitionGrid = ({ searchTerm }) => {
 
   return (
     <>
-    {selectedArtWork ? (
-      <ArtCard artwork={selectedArtWork} onClose={() => {setSelectedArtWork(null)}}/>
-    ) : (
-      <GridContainer>
-      {artworks.length > 0 ? (
-        artworks.map((artwork) => (
-          <GridItem key={artwork.objectID} onClick={() => handleArtWorkClick(artwork)}>
-            <Image src={artwork.primaryImageSmall} alt={artwork.title} />
-            <Title>{artwork.title}</Title>
-            <button onClick={(event) => saveToExhibition(artwork, event)}>Add to Exhibition</button>
-          </GridItem>
-        ))
+      {selectedArtWork ? (
+        <ArtCard artwork={selectedArtWork} onClose={() => { setSelectedArtWork(null) }} />
       ) : (
-        <p>No artworks to display</p>
+        <GridContainer>
+          {artworks.length > 0 ? (
+            artworks.map((artwork) => (
+              <GridItem key={artwork.objectID} onClick={() => handleArtWorkClick(artwork)}>
+                <Image src={artwork.primaryImageSmall} alt={artwork.title} />
+                <Title>{artwork.title}</Title>
+                <button onClick={(event) => saveToExhibition(artwork, event)}>Add to Exhibition</button>
+              </GridItem>
+            ))
+          ) : (
+            <p>No artworks to display</p>
+          )}
+        </GridContainer>
       )}
-    </GridContainer>
-    )}
-  </>
+    </>
   );
 };
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ExhibitionGrid from "./ExhibitionsPage";
 import Form from "./Form";
-import ButtonLink from '../Helpers/helpers'
 import logo from '../Assets/Logo.webp';
 import Knight from '../Assets/Knight.png'
 import { Link } from 'react-router-dom';
@@ -58,8 +57,9 @@ const HomePage = () => {
       <Header>
         <Logo src={logo} alt="Logo" />
         <Title>Exhibition Curator</Title>
-      <ButtonLink to='profile'>Profile</ButtonLink>
-        <KnightButton to='profile'></KnightButton>
+      <Link to='/profile'>
+        <KnightButton />
+      </Link>
       </Header>
       <Form
         searchRequest={searchTerm}

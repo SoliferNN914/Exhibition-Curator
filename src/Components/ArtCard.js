@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const CardContainer = styled.div`
   position: fixed;
@@ -62,6 +63,12 @@ const CloseButton = styled.button`
   right: 10px;
 `;
 
+const AdditionalInfoUrl = styled.a`
+  margin: 5px 0;
+  font-size: 1.2rem;
+  color: #777;
+`;
+
 function useOutsideAlerter(ref, onClose) {
   useEffect(() => {
     function handleClickOutside(event) {
@@ -98,6 +105,15 @@ const ArtCard = ({ artwork, onClose }) => {
         <Description>{artwork.objectDate || 'Unknown Date'}</Description>
         <Description>{artwork.medium || 'Unknown Medium'}</Description>
         <Description>{artwork.dimensions || 'Unknown Dimensions'}</Description>
+        {artwork.objectURL && (
+          <AdditionalInfoUrl
+            href={artwork.objectURL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            More Info on Wikidata
+          </AdditionalInfoUrl>
+        )}
         <button onClick={() => saveToExhibition(artwork)}>Add to Exhibition</button>
       </CardContent>
     </CardContainer>
