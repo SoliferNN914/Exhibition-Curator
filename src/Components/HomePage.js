@@ -50,8 +50,10 @@ const KnightButton = styled.button`
 `;
 
 const HomePage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  const [searchRequest, setSearchRequest] = useState('');
+  const [searchedItem, setSearchedItem] = useState('');
+  const [filters, setFilters] = useState({});
+
   return (
     <Container>
       <Header>
@@ -62,13 +64,86 @@ const HomePage = () => {
       </Link>
       </Header>
       <Form
-        searchRequest={searchTerm}
-        setSearchRequest={setSearchTerm}
-        setSearchedItem={setSearchTerm}
+        searchRequest={searchRequest}
+        setSearchRequest={setSearchRequest}
+        searchedItem={searchedItem}
+        setSearchedItem={setSearchedItem}
+        setFilters={setFilters}
       />
-      <ExhibitionGrid searchTerm={searchTerm} />
+      <ExhibitionGrid searchTerm={searchedItem} filters={filters}/>
     </Container>
   );
 };
 
 export default HomePage;
+
+
+// import React, { useState, useEffect } from 'react';
+// import { fetchAvailableCultures, fetchAvailablePeriods, searchArtworksWithFilters } from '../Services/Api';
+// import Form from './Form';
+// import ExhibitionGrid from './ExhibitionsPage';
+
+// const HomePage = () => {
+//   const [searchRequest, setSearchRequest] = useState('');
+//   const [searchedItem, setSearchedItem] = useState('');
+//   const [filters, setFilters] = useState({});
+//   const [cultures, setCultures] = useState([]);
+//   const [periods, setPeriods] = useState([]);
+//   const [artworks, setArtworks] = useState([]);
+//   const [error, setError] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
+//   // Fetch available cultures and periods from the API
+//   useEffect(() => {
+//     const loadFilterData = async () => {
+//       try {
+//         const [culturesData, periodsData] = await Promise.all([
+//           fetchAvailableCultures(),
+//           fetchAvailablePeriods()
+//         ]);
+//         setCultures(culturesData);
+//         setPeriods(periodsData);
+//       } catch (error) {
+//         console.error('Error fetching cultures and periods:', error);
+//       }
+//     };
+
+//     loadFilterData();
+//   }, []);
+
+//   // Fetch artworks when search term or filters change
+//   useEffect(() => {
+//     const loadArtworks = async () => {
+//       if (!searchedItem) return; // Prevent search on empty input
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         const artworksData = await searchArtworksWithFilters(searchedItem, filters);
+//         setArtworks(artworksData);
+//       } catch (error) {
+//         setError('Failed to fetch artworks');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     loadArtworks();
+//   }, [searchedItem, filters]);
+
+//   return (
+//     <div>
+//       <Form
+//         searchRequest={searchRequest}
+//         setSearchRequest={setSearchRequest}
+//         searchedItem={searchedItem}
+//         setSearchedItem={setSearchedItem}
+//         setFilters={setFilters}
+//         cultures={cultures}   // Pass cultures down to Form
+//         periods={periods}     // Pass periods down to Form
+//       />
+//       <ExhibitionGrid searchTerm={searchedItem} artworks={artworks} />
+//     </div>
+//   );
+// };
+
+// export default HomePage;

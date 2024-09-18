@@ -111,7 +111,7 @@ const ArtCard = ({ artwork, onClose }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            More Info on Wikidata
+            More Info
           </AdditionalInfoUrl>
         )}
         <button onClick={() => saveToExhibition(artwork)}>Add to Exhibition</button>
