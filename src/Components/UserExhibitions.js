@@ -68,7 +68,6 @@ export default function UserExhibitions() {
   const [exhibition, setExhibition] = useState([]);
 
   useEffect(() => {
-    // Get saved exhibition from session storage
     const savedExhibition = JSON.parse(sessionStorage.getItem('userExhibition')) || [];
     setExhibition(savedExhibition);
   }, []);
