@@ -87,7 +87,7 @@ export default function UserExhibitions() {
         <GridContainer>
           {exhibition.map((artwork) => (
             <ArtworkCard key={artwork.objectID}>
-              <ArtworkImage src={artwork.primaryImageSmall} alt={artwork.title} />
+              <ArtworkImage src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
               <ArtworkTitle>{artwork.title}</ArtworkTitle>
               <RemoveButton onClick={() => removeFromExhibition(artwork.objectID)}>
                 Remove

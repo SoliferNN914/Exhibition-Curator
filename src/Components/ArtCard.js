@@ -99,7 +99,7 @@ const ArtCard = ({ artwork, onClose }) => {
     <CardContainer>
       <CardContent ref={wrapperRef}>
         <CloseButton onClick={onClose}>Close</CloseButton>
-        <Image src={artwork.primaryImage} alt={artwork.title} />
+        <Image src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
         <Title>{artwork.title}</Title>
         <Artist>{artwork.artistDisplayName || 'Unknown Artist'}</Artist>
         <Description>{artwork.objectDate || 'Unknown Date'}</Description>

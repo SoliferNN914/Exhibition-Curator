@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { searchArtworks, fetchArtworkDetails, searchRijksArtworks, fetchRijksArtworkDetails } from '../Services/Api';
+import { searchArtworks, fetchArtworkDetails, searchChicagoArtworks, fetchChicagoArtworkDetails } from '../Services/Api';
 import ArtCard from './ArtCard';
 import chariotImage from "../Assets/Chariot.webp";
 
@@ -36,7 +36,7 @@ const GridContainer = styled.div`
 `;
 
 const GridItem = styled.div`
-position: relative;
+  position: relative;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -77,25 +77,41 @@ const Button = styled.button`
   }
 `;
 
+const LoadMoreButton = styled.button`
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+
+  &:hover {
+    background-color: #555;
+  }
+`;
+
 const ExhibitionGrid = ({ searchTerm }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedArtWork, setSelectedArtWork] = useState(null);
+  const [page, setPage] = useState(1); 
 
   useEffect(() => {
-    const loadArtworks = async () => {
+    const loadArtworks = async (reset = false) => {
       try {
         setLoading(true);
         setError(null);
 
-        const defaultSearch = searchTerm || "Sword";
+        const defaultSearch = searchTerm || "flower";
 
-        const rijksObjectIDs = await searchRijksArtworks(defaultSearch);
-        const rijksArtworkDetailsPromises = rijksObjectIDs
+        const chicagoObjectIDs = await searchChicagoArtworks(defaultSearch, page);
+        const chicagoArtworkDetailsPromises = chicagoObjectIDs
           .slice(0, 10)
-          .map((artwork) => fetchRijksArtworkDetails(artwork.objectNumber));
-        const rijksArtworksData = await Promise.all(rijksArtworkDetailsPromises);
+          .map((artwork) => fetchChicagoArtworkDetails(artwork.id, artwork.image_id));
+        const chicagoArtworksData = await Promise.all(chicagoArtworkDetailsPromises);
 
         const metObjectIDs = await searchArtworks(defaultSearch);
         const metArtworkDetailsPromises = metObjectIDs
@@ -103,9 +119,10 @@ const ExhibitionGrid = ({ searchTerm }) => {
           .map((objectID) => fetchArtworkDetails(objectID));
         const metArtworksData = await Promise.all(metArtworkDetailsPromises);
 
-        const combinedArtworks = [...rijksArtworksData, ...metArtworksData];
+        const combinedArtworks = [...chicagoArtworksData, ...metArtworksData];
 
-        setArtworks(combinedArtworks);
+
+        setArtworks((prevArtworks) => (reset ? combinedArtworks : [...prevArtworks, ...combinedArtworks]));
       } catch (error) {
         setError('Failed to fetch artworks');
       } finally {
@@ -113,8 +130,8 @@ const ExhibitionGrid = ({ searchTerm }) => {
       }
     };
 
-    loadArtworks();
-  }, [searchTerm]);
+    loadArtworks(true); 
+  }, [searchTerm, page]);
 
   const saveToExhibition = (artwork, event) => {
     event.stopPropagation();
@@ -128,7 +145,11 @@ const ExhibitionGrid = ({ searchTerm }) => {
     setSelectedArtWork(artwork);
   };
 
-  if (loading) {
+  const loadMoreArtworks = () => {
+    setPage((prevPage) => prevPage + 1); 
+  };
+
+  if (loading && page === 1) {
     return (
       <LoadingContainer>
         <Chariot src={chariotImage} alt="Loading Chariot" />
@@ -145,23 +166,27 @@ const ExhibitionGrid = ({ searchTerm }) => {
       {selectedArtWork ? (
         <ArtCard artwork={selectedArtWork} onClose={() => { setSelectedArtWork(null); }} />
       ) : (
-        <GridContainer>
-          {artworks.length > 0 ? (
-            artworks.map((artwork, index) => (
-              <GridItem key={index} onClick={() => handleArtWorkClick(artwork)}>
-                {artwork.webImage?.url || artwork.primaryImageSmall ? (
-                  <Image src={artwork.webImage?.url || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
-                ) : (
-                  <p>No image available</p>
-                )}
-                <Title>{artwork.title || 'Untitled'}</Title>
-                <Button onClick={(event) => saveToExhibition(artwork, event)}>Add</Button>
-              </GridItem>
-            ))
-          ) : (
-            <p>No artworks to display</p>
-          )}
-        </GridContainer>
+        <>
+          <GridContainer>
+            {artworks.length > 0 ? (
+              artworks.map((artwork, index) => (
+                <GridItem key={index} onClick={() => handleArtWorkClick(artwork)}>
+                  {artwork.imageUrl || artwork.primaryImageSmall ? (
+                    <Image src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
+                  ) : (
+                    <p>No image available</p>
+                  )}
+                  <Title>{artwork.title || 'Untitled'}</Title>
+                  <Button onClick={(event) => saveToExhibition(artwork, event)}>Add</Button>
+                </GridItem>
+              ))
+            ) : (
+              <p>No artworks to display</p>
+            )}
+          </GridContainer>
+
+          <LoadMoreButton onClick={loadMoreArtworks}>Load More</LoadMoreButton>
+        </>
       )}
     </>
   );

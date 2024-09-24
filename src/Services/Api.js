@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
-const RIJKS_API_BASE_URL = 'https://www.rijksmuseum.nl/api/en/collection';
-const Apikey = process.env.REACT_APP_RIJKS_API_KEY;
+const CHICAGO_API_BASE_URL = 'https://api.artic.edu/api/v1/artworks';
 
 export const searchArtworks = async (searchTerm) => {
   try {
@@ -29,39 +28,55 @@ export const fetchArtworkDetails = async (objectID) => {
   }
 };
 
-export const searchRijksArtworks = async (searchTerm) => {
+export const searchChicagoArtworks = async (searchTerm, page = 1) => {
   try {
-    const response = await axios.get(`${RIJKS_API_BASE_URL}`, {
+    const response = await axios.get(`${CHICAGO_API_BASE_URL}/search`, {
       params: {
-        key: Apikey,
         q: searchTerm,
-        imgonly: true,
+        page: page,
+        limit: 10, 
+        fields: 'id,title,image_id',
       },
-      mode: 'cors'
     });
-    console.log('SearcRijksArtworks', response.data.artObjects);
-    
-    return response.data.artObjects || [];
+
+    return response.data.data || [];
   } catch (error) {
-    console.error('Error searching Rijksmuseum artworks:', error);
+    console.error('Error searching Art Institute of Chicago artworks:', error);
     throw error;
   }
 };
 
 
-export const fetchRijksArtworkDetails = async (id) => {
-  console.log('fetchdetailsID', id);
-  
+
+export const fetchChicagoArtworkDetails = async (id, image_id) => {
   try {
-    const response = await axios.get(`${RIJKS_API_BASE_URL}/${id}`, {
-      params: {
-        key: Apikey,
-      },
-    });
-    console.log('Artwork details:', response.data.artObject);
-    return response.data.artObject;
+    const response = await axios.get(`${CHICAGO_API_BASE_URL}/${id}`);
+
+    const {
+      title,
+      artist_display: artistDisplayName,
+      date_display: objectDate,
+      medium_display: medium,
+      dimensions,
+    } = response.data.data;
+
+    const imageUrl = `https://www.artic.edu/iiif/2/${image_id}/full/843,/0/default.jpg`;
+
+    const objectURL = `https://www.artic.edu/artworks/${id}`;
+
+    return { 
+      title, 
+      artistDisplayName, 
+      objectDate, 
+      medium, 
+      dimensions, 
+      objectURL,
+      imageUrl 
+    };
   } catch (error) {
-    console.error('Error fetching Rijksmuseum artwork details:', error);
+    console.error('Error fetching Art Institute of Chicago artwork details:', error);
     throw error;
   }
 };
+
+
