@@ -52,6 +52,12 @@ const KnightButton = styled.button`
   }
 `;
 
+const ProfileText = styled.p`
+  margin: 5px 0 0;
+  font-size: 1rem;
+  color: black;
+`;
+
 const HomePage = () => {
   const [searchRequest, setSearchRequest] = useState('');
   const [searchedItem, setSearchedItem] = useState('');
@@ -64,6 +70,7 @@ const HomePage = () => {
         <Title>Exhibition Curator</Title>
       <Link to='/profile'>
         <KnightButton />
+        <ProfileText>Profile</ProfileText>
       </Link>
       </Header>
       <Form

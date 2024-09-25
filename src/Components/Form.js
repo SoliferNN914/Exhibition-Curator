@@ -60,7 +60,6 @@ export default function Form(props) {
     <FormContainer>
       <StyledForm onSubmit={handleSubmit}>
         <div>
-          {/* <StyledLabel htmlFor="artSearch">Search for Art:</StyledLabel> */}
           <StyledInput
             id="artSearch"
             placeholder="Find Your Favourite Art"

@@ -62,7 +62,7 @@ const Title = styled.h3`
 
 const Button = styled.button`
   position: absolute;
-  bottom: 10px; /* Place the button at the bottom */
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #333;
@@ -92,15 +92,24 @@ const LoadMoreButton = styled.button`
   }
 `;
 
+const SearchMessage = styled.p`
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
+`;
+
 const ExhibitionGrid = ({ searchTerm }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedArtWork, setSelectedArtWork] = useState(null);
   const [page, setPage] = useState(1); 
+  const [visibleMetArtworks, setVisibleMetArtworks] = useState(10); 
+  const [initialMetLoaded, setInitialMetLoaded] = useState(false); 
 
   useEffect(() => {
-    const loadArtworks = async (reset = false) => {
+    const loadArtworks = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -113,16 +122,19 @@ const ExhibitionGrid = ({ searchTerm }) => {
           .map((artwork) => fetchChicagoArtworkDetails(artwork.id, artwork.image_id));
         const chicagoArtworksData = await Promise.all(chicagoArtworkDetailsPromises);
 
-        const metObjectIDs = await searchArtworks(defaultSearch);
-        const metArtworkDetailsPromises = metObjectIDs
-          .slice(0, 10)
-          .map((objectID) => fetchArtworkDetails(objectID));
-        const metArtworksData = await Promise.all(metArtworkDetailsPromises);
+        if (page === 1 && !initialMetLoaded) {
+          const metObjectIDs = await searchArtworks(defaultSearch);
+          const metArtworkDetailsPromises = metObjectIDs
+            .slice(0, visibleMetArtworks)
+            .map((objectID) => fetchArtworkDetails(objectID));
+          const metArtworksData = await Promise.all(metArtworkDetailsPromises);
 
-        const combinedArtworks = [...chicagoArtworksData, ...metArtworksData];
+          setArtworks([...chicagoArtworksData, ...metArtworksData]);
+          setInitialMetLoaded(true); 
+        } else {
 
-
-        setArtworks((prevArtworks) => (reset ? combinedArtworks : [...prevArtworks, ...combinedArtworks]));
+          setArtworks((prevArtworks) => [...prevArtworks, ...chicagoArtworksData]);
+        }
       } catch (error) {
         setError('Failed to fetch artworks');
       } finally {
@@ -130,8 +142,31 @@ const ExhibitionGrid = ({ searchTerm }) => {
       }
     };
 
-    loadArtworks(true); 
+    loadArtworks();
   }, [searchTerm, page]);
+
+
+  useEffect(() => {
+    if (searchTerm) {
+      setArtworks([]);
+      setPage(1);
+      setVisibleMetArtworks(10); 
+      setInitialMetLoaded(false); 
+    }
+  }, [searchTerm]);
+
+ 
+  const loadMoreMetArtworks = async () => {
+    const nextChunkSize = 10; 
+    const metObjectIDs = await searchArtworks(searchTerm || "flower");
+    const nextBatch = metObjectIDs.slice(visibleMetArtworks, visibleMetArtworks + nextChunkSize);
+
+    const metArtworkDetailsPromises = nextBatch.map((objectID) => fetchArtworkDetails(objectID));
+    const nextMetArtworksData = await Promise.all(metArtworkDetailsPromises);
+
+    setArtworks((prevArtworks) => [...prevArtworks, ...nextMetArtworksData]); 
+    setVisibleMetArtworks(visibleMetArtworks + nextChunkSize);
+  };
 
   const saveToExhibition = (artwork, event) => {
     event.stopPropagation();
@@ -147,6 +182,7 @@ const ExhibitionGrid = ({ searchTerm }) => {
 
   const loadMoreArtworks = () => {
     setPage((prevPage) => prevPage + 1); 
+    loadMoreMetArtworks(); 
   };
 
   if (loading && page === 1) {
@@ -167,6 +203,10 @@ const ExhibitionGrid = ({ searchTerm }) => {
         <ArtCard artwork={selectedArtWork} onClose={() => { setSelectedArtWork(null); }} />
       ) : (
         <>
+          <SearchMessage>
+            Currently, you are looking for "{searchTerm || 'flower'}" items
+          </SearchMessage>
+
           <GridContainer>
             {artworks.length > 0 ? (
               artworks.map((artwork, index) => (
@@ -184,7 +224,6 @@ const ExhibitionGrid = ({ searchTerm }) => {
               <p>No artworks to display</p>
             )}
           </GridContainer>
-
           <LoadMoreButton onClick={loadMoreArtworks}>Load More</LoadMoreButton>
         </>
       )}
