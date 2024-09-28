@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { searchArtworks, fetchArtworkDetails, searchChicagoArtworks, fetchChicagoArtworkDetails } from '../Services/Api';
 import ArtCard from './ArtCard';
 import chariotImage from "../Assets/Chariot.webp";
+import ProgressiveImage from "react-progressive-graceful-image";
 
 const moveChariot = keyframes`
   0% {
@@ -47,13 +48,6 @@ const GridItem = styled.div`
   cursor: pointer;
 `;
 
-const Image = styled.img`
-  width: 100%;
-  height: 60%;
-  display: block;
-  object-fit: cover;
-`;
-
 const Title = styled.h3`
   margin: 10px 0;
   font-size: 1.2rem;
@@ -92,80 +86,81 @@ const LoadMoreButton = styled.button`
   }
 `;
 
-const SearchMessage = styled.p`
-  text-align: center;
-  font-size: 1.2rem;
-  color: #555;
-  margin-top: 10px;
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f3f3;
+  color: #aaa;
+  font-size: 1rem;
 `;
 
-const ExhibitionGrid = ({ searchTerm }) => {
+const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedArtWork, setSelectedArtWork] = useState(null);
-  const [page, setPage] = useState(1); 
-  const [visibleMetArtworks, setVisibleMetArtworks] = useState(10); 
-  const [initialMetLoaded, setInitialMetLoaded] = useState(false); 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const loadArtworks = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const { startYear, endYear } = filters;
 
-        const defaultSearch = searchTerm || "flower";
+  const loadArtworks = async (currentPage, isLoadingMore = false) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const chicagoObjectIDs = await searchChicagoArtworks(defaultSearch, page);
-        const chicagoArtworkDetailsPromises = chicagoObjectIDs
-          .slice(0, 10)
-          .map((artwork) => fetchChicagoArtworkDetails(artwork.id, artwork.image_id));
-        const chicagoArtworksData = await Promise.all(chicagoArtworkDetailsPromises);
+      const defaultSearch = searchTerm || "flower";
 
-        if (page === 1 && !initialMetLoaded) {
-          const metObjectIDs = await searchArtworks(defaultSearch);
-          const metArtworkDetailsPromises = metObjectIDs
-            .slice(0, visibleMetArtworks)
-            .map((objectID) => fetchArtworkDetails(objectID));
-          const metArtworksData = await Promise.all(metArtworkDetailsPromises);
+      const chicagoObjectIDs = await searchChicagoArtworks(defaultSearch, currentPage, startYear, endYear);
+      const chicagoArtworkDetailsPromises = chicagoObjectIDs
+        .slice(0, 10)
+        .map((artwork) => fetchChicagoArtworkDetails(artwork.id, artwork.image_id));
+      const chicagoArtworksData = await Promise.all(chicagoArtworkDetailsPromises);
 
-          setArtworks([...chicagoArtworksData, ...metArtworksData]);
-          setInitialMetLoaded(true); 
-        } else {
+      const metObjectIDs = await searchArtworks(defaultSearch, startYear, endYear);
+      const metStartIndex = (currentPage - 1) * 10;
+      const metArtworkDetailsPromises = metObjectIDs
+        .slice(metStartIndex, metStartIndex + 10)
+        .map((objectID) => fetchArtworkDetails(objectID));
+      const metArtworksData = await Promise.all(metArtworkDetailsPromises);
 
-          setArtworks((prevArtworks) => [...prevArtworks, ...chicagoArtworksData]);
-        }
-      } catch (error) {
-        setError('Failed to fetch artworks');
-      } finally {
-        setLoading(false);
+      const validMetArtworks = metArtworksData.filter((artwork) => artwork !== null);
+      let newArtworks = [...chicagoArtworksData, ...validMetArtworks];
+
+      if (sortOrder === 'asc') {
+        newArtworks.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortOrder === 'desc') {
+        newArtworks.sort((a, b) => b.title.localeCompare(a.title));
       }
-    };
 
-    loadArtworks();
-  }, [searchTerm, page]);
+      if (isLoadingMore) {
+        setArtworks(prevArtworks => [...prevArtworks, ...newArtworks]);
+      } else {
+        setArtworks(newArtworks);
+      }
 
+      setHasMore(newArtworks.length > 0);
+    } catch (error) {
+      setError('Failed To Find Art, Try Again');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (searchTerm) {
-      setArtworks([]);
-      setPage(1);
-      setVisibleMetArtworks(10); 
-      setInitialMetLoaded(false); 
-    }
-  }, [searchTerm]);
+    setArtworks([]);
+    setPage(1);
+    setHasMore(true);
+    loadArtworks(1);
+  }, [searchTerm, filters, sortOrder]);
 
- 
-  const loadMoreMetArtworks = async () => {
-    const nextChunkSize = 10; 
-    const metObjectIDs = await searchArtworks(searchTerm || "flower");
-    const nextBatch = metObjectIDs.slice(visibleMetArtworks, visibleMetArtworks + nextChunkSize);
-
-    const metArtworkDetailsPromises = nextBatch.map((objectID) => fetchArtworkDetails(objectID));
-    const nextMetArtworksData = await Promise.all(metArtworkDetailsPromises);
-
-    setArtworks((prevArtworks) => [...prevArtworks, ...nextMetArtworksData]); 
-    setVisibleMetArtworks(visibleMetArtworks + nextChunkSize);
+  const loadMoreArtworks = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadArtworks(nextPage, true);
   };
 
   const saveToExhibition = (artwork, event) => {
@@ -178,11 +173,6 @@ const ExhibitionGrid = ({ searchTerm }) => {
 
   const handleArtWorkClick = (artwork) => {
     setSelectedArtWork(artwork);
-  };
-
-  const loadMoreArtworks = () => {
-    setPage((prevPage) => prevPage + 1); 
-    loadMoreMetArtworks(); 
   };
 
   if (loading && page === 1) {
@@ -203,19 +193,22 @@ const ExhibitionGrid = ({ searchTerm }) => {
         <ArtCard artwork={selectedArtWork} onClose={() => { setSelectedArtWork(null); }} />
       ) : (
         <>
-          <SearchMessage>
-            Currently, you are looking for "{searchTerm || 'flower'}" items
-          </SearchMessage>
-
           <GridContainer>
             {artworks.length > 0 ? (
               artworks.map((artwork, index) => (
                 <GridItem key={index} onClick={() => handleArtWorkClick(artwork)}>
-                  {artwork.imageUrl || artwork.primaryImageSmall ? (
-                    <Image src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
-                  ) : (
-                    <p>No image available</p>
-                  )}
+                  <ProgressiveImage
+                    src={artwork.imageUrl || artwork.primaryImageSmall}
+                    placeholder="https://via.placeholder.com/200"
+                  >
+                    {(src, loading) => (
+                      loading ? (
+                        <ImagePlaceholder>Loading Image...</ImagePlaceholder>
+                      ) : (
+                        <img src={src} alt={artwork.title || 'Untitled'} style={{ width: '100%', height: '60%' }} />
+                      )
+                    )}
+                  </ProgressiveImage>
                   <Title>{artwork.title || 'Untitled'}</Title>
                   <Button onClick={(event) => saveToExhibition(artwork, event)}>Add</Button>
                 </GridItem>
@@ -224,7 +217,7 @@ const ExhibitionGrid = ({ searchTerm }) => {
               <p>No artworks to display</p>
             )}
           </GridContainer>
-          <LoadMoreButton onClick={loadMoreArtworks}>Load More</LoadMoreButton>
+          {hasMore && <LoadMoreButton onClick={loadMoreArtworks}>Load More</LoadMoreButton>}
         </>
       )}
     </>

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 const CardContainer = styled.div`
   position: fixed;
@@ -8,7 +7,7 @@ const CardContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,12 +17,12 @@ const CardContainer = styled.div`
 const CardContent = styled.div`
   width: 90%;
   max-width: 800px;
-  max-height: 90%; /* Ensure the card does not overflow the screen */
+  max-height: 90%;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  overflow-y: auto; /* Enable scrolling if content is too tall */
+  overflow-y: auto;
   position: relative;
 `;
 
@@ -40,13 +39,24 @@ const Title = styled.h2`
 `;
 
 const Artist = styled.h4`
-  margin: 5px 0;
+  margin: 5px 0 15px;
   font-size: 1.2rem;
   color: #777;
 `;
 
+const DescriptionItem = styled.div`
+  margin-bottom: 15px;
+`;
+
+const DescriptionTitle = styled.h5`
+  margin: 0 0 5px;
+  font-size: 1rem;
+  color: #555;
+  font-weight: bold;
+`;
+
 const Description = styled.p`
-  margin-top: 10px;
+  margin: 0;
   font-size: 1rem;
   color: #555;
 `;
@@ -63,10 +73,36 @@ const CloseButton = styled.button`
   right: 10px;
 `;
 
-const AdditionalInfoUrl = styled.a`
-  margin: 5px 0;
-  font-size: 1.2rem;
-  color: #777;
+const AdditionalInfoText = styled.p`
+  margin: 20px 0 10px;
+  font-size: 1rem;
+  color: #555;
+`;
+
+const AdditionalInfoLink = styled.a`
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: bold;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const AddToExhibitionButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+  width: 100%;
+  
+  &:hover {
+    background-color: #45a049;
+  }
 `;
 
 function useOutsideAlerter(ref, onClose) {
@@ -102,19 +138,34 @@ const ArtCard = ({ artwork, onClose }) => {
         <Image src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
         <Title>{artwork.title}</Title>
         <Artist>{artwork.artistDisplayName || 'Unknown Artist'}</Artist>
-        <Description>{artwork.objectDate || 'Unknown Date'}</Description>
-        <Description>{artwork.medium || 'Unknown Medium'}</Description>
-        <Description>{artwork.dimensions || 'Unknown Dimensions'}</Description>
+        <DescriptionItem>
+          <DescriptionTitle>Date:</DescriptionTitle>
+          <Description>{artwork.objectDate || 'Unknown'}</Description>
+        </DescriptionItem>
+        <DescriptionItem>
+          <DescriptionTitle>Medium:</DescriptionTitle>
+          <Description>{artwork.medium || 'Unknown'}</Description>
+        </DescriptionItem>
+        <DescriptionItem>
+          <DescriptionTitle>Dimensions:</DescriptionTitle>
+          <Description>{artwork.dimensions || 'Unknown'}</Description>
+        </DescriptionItem>
         {artwork.objectURL && (
-          <AdditionalInfoUrl
-            href={artwork.objectURL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            More Info
-          </AdditionalInfoUrl>
+          <AdditionalInfoText>
+            For more details, visit the{' '}
+            <AdditionalInfoLink
+              href={artwork.objectURL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              artwork's page
+            </AdditionalInfoLink>
+            .
+          </AdditionalInfoText>
         )}
-        <button onClick={() => saveToExhibition(artwork)}>Add to Exhibition</button>
+        <AddToExhibitionButton onClick={() => saveToExhibition(artwork)}>
+          Add to Exhibition
+        </AddToExhibitionButton>
       </CardContent>
     </CardContainer>
   );

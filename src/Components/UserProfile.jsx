@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 import ButtonLink from '../Helpers/helpers';
+import Header from "./Header";
 
 const ProfileContainer = styled.div`
   margin-top: 20px;
@@ -10,15 +11,6 @@ const ProfileContainer = styled.div`
   padding: 20px;
 `;
 
-const Header = styled.header`
-  width: 100%;
-  padding: 20px;
-  background-color: #878E76;
-  color: white;
-  text-align: center;
-  border-radius: 5px;
-`;
-
 const Subtitle = styled.h2`
   color: #555;
   margin: 20px 0;
@@ -26,12 +18,12 @@ const Subtitle = styled.h2`
 
 export default function UserProfile() {
   return (
+    <>
+    <Header/>
     <ProfileContainer>
-      <Header>
-        Welcome to your profile
-      </Header>
-      <Subtitle>Manage your collections and exhibitions</Subtitle>
+      <Subtitle>Manage Your Exibition</Subtitle>
       <ButtonLink to="/exhibition">View Your Exhibition</ButtonLink>
     </ProfileContainer>
+    </>
   );
 }

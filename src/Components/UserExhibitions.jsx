@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-//import img from '../Assets/Vault-background.jpg'
+import Header from "./Header";
 
 const ExhibitionContainer = styled.div`
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
 `;
 
 const ExhibitionTitle = styled.h2`
@@ -15,6 +16,10 @@ const ExhibitionTitle = styled.h2`
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const GridContainer = styled.div`
@@ -22,6 +27,12 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 10px;
+  }
 `;
 
 const ArtworkCard = styled.div`
@@ -31,6 +42,10 @@ const ArtworkCard = styled.div`
   overflow: hidden;
   text-align: center;
   padding: 10px;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
 `;
 
 const ArtworkImage = styled.img`
@@ -44,6 +59,11 @@ const ArtworkTitle = styled.h3`
   font-size: 1.2rem;
   color: #555;
   margin: 10px 0;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin: 8px 0;
+  }
 `;
 
 const RemoveButton = styled.button`
@@ -57,11 +77,19 @@ const RemoveButton = styled.button`
   &:hover {
     background-color: #c9302c;
   }
+
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
 `;
 
 const NoExhibition = styled.h3`
-text-align: center;
+  text-align: center;
 
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export default function UserExhibitions() {
@@ -79,23 +107,26 @@ export default function UserExhibitions() {
   };
 
   return (
-    <ExhibitionContainer>
-      <ExhibitionTitle>Your Personal Vault of Saved Art</ExhibitionTitle>
-      {exhibition.length === 0 ? (
-        <NoExhibition>Vault Empty</NoExhibition>
-      ) : (
-        <GridContainer>
-          {exhibition.map((artwork) => (
-            <ArtworkCard key={artwork.objectID}>
-              <ArtworkImage src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
-              <ArtworkTitle>{artwork.title}</ArtworkTitle>
-              <RemoveButton onClick={() => removeFromExhibition(artwork.objectID)}>
-                Remove
-              </RemoveButton>
-            </ArtworkCard>
-          ))}
-        </GridContainer>
-      )}
-    </ExhibitionContainer>
+    <>
+      <Header/>
+      <ExhibitionContainer>
+        <ExhibitionTitle>Your Personal Collection Of Unique Art</ExhibitionTitle>
+        {exhibition.length === 0 ? (
+          <NoExhibition>Currently Empty | Add Items To Create Your Own Exhibition</NoExhibition>
+        ) : (
+          <GridContainer>
+            {exhibition.map((artwork) => (
+              <ArtworkCard key={artwork.objectID}>
+                <ArtworkImage src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
+                <ArtworkTitle>{artwork.title}</ArtworkTitle>
+                <RemoveButton onClick={() => removeFromExhibition(artwork.objectID)}>
+                  Remove
+                </RemoveButton>
+              </ArtworkCard>
+            ))}
+          </GridContainer>
+        )}
+      </ExhibitionContainer>
+    </>
   );
 }
