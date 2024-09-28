@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import Header from "./Header";
+import ArtCard from "./ArtCard";
 
 const ExhibitionContainer = styled.div`
   padding: 20px;
@@ -94,41 +95,75 @@ const NoExhibition = styled.h3`
 
 export default function UserExhibitions() {
   const [exhibition, setExhibition] = useState([]);
+  const [selectedArtWork, setSelectedArtWork] = useState(null);
 
   useEffect(() => {
-    const savedExhibition = JSON.parse(sessionStorage.getItem('userExhibition')) || [];
+    const savedExhibition =
+      JSON.parse(sessionStorage.getItem("userExhibition")) || [];
     setExhibition(savedExhibition);
   }, []);
 
   const removeFromExhibition = (objectID) => {
     console.log("objectID", objectID);
-    
-    const updatedExhibition = exhibition.filter((artwork) => artwork.objectID !== objectID);
+
+    const updatedExhibition = exhibition.filter(
+      (artwork) => artwork.objectID !== objectID
+    );
     setExhibition(updatedExhibition);
-    sessionStorage.setItem('userExhibition', JSON.stringify(updatedExhibition));
+    sessionStorage.setItem("userExhibition", JSON.stringify(updatedExhibition));
+  };
+
+  const handleArtWorkClick = (artwork) => {
+    setSelectedArtWork(artwork);
   };
 
   return (
     <>
-      <Header/>
-      <ExhibitionContainer>
-        <ExhibitionTitle>Your Personal Collection Of Unique Art</ExhibitionTitle>
-        {exhibition.length === 0 ? (
-          <NoExhibition>Currently Empty | Add Items To Create Your Own Exhibition</NoExhibition>
-        ) : (
-          <GridContainer>
-            {exhibition.map((artwork) => (
-              <ArtworkCard key={artwork.objectID}>
-                <ArtworkImage src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
-                <ArtworkTitle>{artwork.title}</ArtworkTitle>
-                <RemoveButton onClick={() => removeFromExhibition(artwork.objectID)}>
-                  Remove
-                </RemoveButton>
-              </ArtworkCard>
-            ))}
-          </GridContainer>
-        )}
-      </ExhibitionContainer>
+      {selectedArtWork ? (
+        <ArtCard
+          artwork={selectedArtWork}
+          onClose={() => {
+            setSelectedArtWork(null);
+          }}
+        />
+      ) : (
+        <>
+          <Header />
+          <ExhibitionContainer>
+            <ExhibitionTitle>
+              Your Personal Collection Of Unique Art
+            </ExhibitionTitle>
+            {exhibition.length === 0 ? (
+              <NoExhibition>
+                Currently Empty | Add Items To Create Your Own Exhibition
+              </NoExhibition>
+            ) : (
+              <GridContainer>
+                {exhibition.map((artwork) => (
+                  <ArtworkCard
+                    key={artwork.objectID}
+                    onClick={() => handleArtWorkClick(artwork)}
+                  >
+                    <ArtworkImage
+                      src={artwork.imageUrl || artwork.primaryImageSmall}
+                      alt={artwork.title || "Untitled"}
+                    />
+                    <ArtworkTitle>{artwork.title}</ArtworkTitle>
+                    <RemoveButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromExhibition(artwork.objectID);
+                      }}
+                    >
+                      Remove
+                    </RemoveButton>
+                  </ArtworkCard>
+                ))}
+              </GridContainer>
+            )}
+          </ExhibitionContainer>
+        </>
+      )}
     </>
   );
 }
