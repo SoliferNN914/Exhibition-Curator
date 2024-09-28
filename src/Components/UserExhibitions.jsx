@@ -101,6 +101,8 @@ export default function UserExhibitions() {
   }, []);
 
   const removeFromExhibition = (objectID) => {
+    console.log("objectID", objectID);
+    
     const updatedExhibition = exhibition.filter((artwork) => artwork.objectID !== objectID);
     setExhibition(updatedExhibition);
     sessionStorage.setItem('userExhibition', JSON.stringify(updatedExhibition));

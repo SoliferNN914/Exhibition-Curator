@@ -4,7 +4,6 @@ const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/
 const CHICAGO_API_BASE_URL = 'https://api.artic.edu/api/v1/artworks';
 
 export const searchArtworks = async (searchTerm, startYear, endYear) => {
-  console.log("met Year", startYear, endYear);
   
   try {
     const response = await axios.get(`${MET_API_BASE_URL}/search`, {
@@ -16,7 +15,6 @@ export const searchArtworks = async (searchTerm, startYear, endYear) => {
         q: searchTerm,
       },
     });
-    console.log("metresponse", response.data);
     
     return response.data.objectIDs || [];
   } catch (error) {
@@ -64,6 +62,7 @@ export const fetchArtworkDetails = async (objectID) => {
       objectURL,
       medium,
       dimensions,
+      objectID,
     };
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -76,8 +75,6 @@ export const fetchArtworkDetails = async (objectID) => {
 
 
 export const searchChicagoArtworks = async (searchTerm, page = 1, startYear, endYear) => {
-  console.log("Chicago search parameters:", { searchTerm, page, startYear, endYear });
-  
   let query = searchTerm;
 
   if (startYear || endYear) {
@@ -101,9 +98,7 @@ export const searchChicagoArtworks = async (searchTerm, page = 1, startYear, end
         limit: 20,
       },
     });
-    
-    console.log("Chicago API response:", response.data);
-    
+
     return response.data.data || [];
   } catch (error) {
     console.error('Error searching Art Institute of Chicago artworks:', error);
@@ -134,7 +129,8 @@ export const fetchChicagoArtworkDetails = async (id) => {
     const imageUrl = image_id ? `https://www.artic.edu/iiif/2/${image_id}/full/843,/0/default.jpg` : null;
     const objectURL = `https://www.artic.edu/artworks/${id}`;
 
-    return { 
+    return {
+      objectID: id,
       title, 
       artistDisplayName: artist_display, 
       objectDate: date_display, 
