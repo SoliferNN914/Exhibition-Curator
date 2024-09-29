@@ -43,12 +43,15 @@ const ArtworkCard = styled.div`
   overflow: hidden;
   text-align: center;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
 
   @media (max-width: 768px) {
     padding: 8px;
   }
 `;
-
 const ArtworkImage = styled.img`
   width: 100%;
   height: auto;
@@ -74,6 +77,7 @@ const RemoveButton = styled.button`
   padding: 8px 15px;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: auto;
 
   &:hover {
     background-color: #c9302c;
@@ -104,7 +108,6 @@ export default function UserExhibitions() {
   }, []);
 
   const removeFromExhibition = (objectID) => {
-    console.log("objectID", objectID);
 
     const updatedExhibition = exhibition.filter(
       (artwork) => artwork.objectID !== objectID

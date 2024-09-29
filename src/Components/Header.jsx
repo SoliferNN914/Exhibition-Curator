@@ -88,7 +88,7 @@ const KnightButton = styled.button`
 const ProfileText = styled.span`
   margin-top: 5px;
   font-size: 0.9rem;
-  color: #878E76;
+  color: black;
   font-weight: 500;
   transition: color 0.3s ease;
 
@@ -111,7 +111,7 @@ const Header = () => {
         </Link>
         <Title>Exhibition Curator</Title>
         <ProfileContainer to='/profile'>
-          <KnightButton />
+          <KnightButton aria-label='Profile-Button'/>
           <ProfileText>Profile</ProfileText>
         </ProfileContainer>
       </HeaderContainer>

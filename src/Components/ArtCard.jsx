@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import styled from 'styled-components';
+import ProgressiveImage from "react-progressive-graceful-image";
 
 const CardContainer = styled.div`
   position: fixed;
@@ -26,10 +27,15 @@ const CardContent = styled.div`
   position: relative;
 `;
 
-const Image = styled.img`
+const ImagePlaceholder = styled.div`
   width: 100%;
-  height: auto;
-  border-radius: 8px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f3f3;
+  color: black;
+  font-size: 1rem;
 `;
 
 const Title = styled.h2`
@@ -135,7 +141,20 @@ const ArtCard = ({ artwork, onClose }) => {
     <CardContainer>
       <CardContent ref={wrapperRef}>
         <CloseButton onClick={onClose}>Close</CloseButton>
-        <Image src={artwork.imageUrl || artwork.primaryImageSmall} alt={artwork.title || 'Untitled'} />
+
+        <ProgressiveImage
+          src={artwork.imageUrl || artwork.primaryImageSmall}
+          placeholder="https://via.placeholder.com/300"
+        >
+          {(src, loading) => (
+            loading ? (
+              <ImagePlaceholder>Loading Image...</ImagePlaceholder>
+            ) : (
+              <img src={src} alt={artwork.title || 'Untitled'} style={{ width: '100%', borderRadius: '8px' }} />
+            )
+          )}
+        </ProgressiveImage>
+
         <Title>{artwork.title}</Title>
         <Artist>{artwork.artistDisplayName || 'Unknown Artist'}</Artist>
         <DescriptionItem>

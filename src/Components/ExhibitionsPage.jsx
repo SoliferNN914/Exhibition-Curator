@@ -46,6 +46,7 @@ const GridItem = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding-bottom: 40px;
   cursor: pointer;
+  aspect-ratio: 3 / 4;
 `;
 
 const Title = styled.h3`
@@ -84,6 +85,11 @@ const LoadMoreButton = styled.button`
   &:hover {
     background-color: #555;
   }
+
+  &:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
 `;
 
 const ImagePlaceholder = styled.div`
@@ -93,13 +99,14 @@ const ImagePlaceholder = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #f3f3f3;
-  color: #aaa;
+  color: black;
   font-size: 1rem;
 `;
 
 const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [selectedArtWork, setSelectedArtWork] = useState(null);
   const [page, setPage] = useState(1);
@@ -109,7 +116,11 @@ const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
 
   const loadArtworks = async (currentPage, isLoadingMore = false) => {
     try {
-      setLoading(true);
+      if (isLoadingMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
 
       const defaultSearch = searchTerm || "flower";
@@ -147,6 +158,7 @@ const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
       setError('Failed To Find Art, Try Again');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -205,7 +217,7 @@ const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
                       loading ? (
                         <ImagePlaceholder>Loading Image...</ImagePlaceholder>
                       ) : (
-                        <img src={src} alt={artwork.title || 'Untitled'} style={{ width: '100%', height: '60%' }} />
+                        <img src={src} alt={artwork.title || 'Untitled'} style={{ width: '100%', height: '60%', objectFit: 'cover' }} />
                       )
                     )}
                   </ProgressiveImage>
@@ -217,7 +229,11 @@ const ExhibitionGrid = ({ searchTerm, filters, sortOrder }) => {
               <p>No artworks to display</p>
             )}
           </GridContainer>
-          {hasMore && <LoadMoreButton onClick={loadMoreArtworks}>Load More</LoadMoreButton>}
+          {hasMore && (
+            <LoadMoreButton onClick={loadMoreArtworks} disabled={loadingMore}>
+              {loadingMore ? 'Loading...' : 'Load More'}
+            </LoadMoreButton>
+          )}
         </>
       )}
     </>

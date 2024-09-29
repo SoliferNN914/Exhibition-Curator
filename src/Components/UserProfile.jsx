@@ -20,7 +20,7 @@ export default function UserProfile() {
   return (
     <>
     <Header/>
-    <ProfileContainer>
+    <ProfileContainer role="main" aria-labelledby="profile-subtitle">
       <Subtitle>Manage Your Exibition</Subtitle>
       <ButtonLink to="/exhibition">View Your Exhibition</ButtonLink>
     </ProfileContainer>
