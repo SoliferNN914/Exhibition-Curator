@@ -10,6 +10,12 @@ This **Exhibition Curator App** is built using React and allows users to search 
 - **Temporary Exhibition:** Users can add artworks to a temporary exhibition collection, which is saved locally for the session.
 - **Responsive Design:** The app is optimized for mobile and desktop use.
 
+- ## Live Demo
+
+The project is hosted on **Vercel** and can be accessed through this link:
+
+**[Exhibition Curator App](https://exhibition-curator-nu.vercel.app)**
+
 ## Technologies Used
 
 - **Frontend:** React
