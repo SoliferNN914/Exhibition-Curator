@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "./Header";
-import ArtCard from "./ArtCard";
+import ExhibitionCard from "./ExhibitionCard";
 
 const ExhibitionContainer = styled.div`
   padding: 20px;
@@ -123,7 +123,7 @@ export default function UserExhibitions() {
   return (
     <>
       {selectedArtWork ? (
-        <ArtCard
+        <ExhibitionCard
           artwork={selectedArtWork}
           onClose={() => {
             setSelectedArtWork(null);
