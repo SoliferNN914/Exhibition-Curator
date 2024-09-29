@@ -105,7 +105,7 @@ export default function Form({ searchRequest, setSearchRequest, searchedItem, se
     event.preventDefault();
     setSearchedItem(searchRequest);
     setFilters(prevFilters => ({ ...prevFilters, startYear, endYear }));
-    setSearchRequest('');
+    //setSearchRequest('');
   };
 
   return (
