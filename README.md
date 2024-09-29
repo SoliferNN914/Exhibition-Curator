@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# Exhibition Curator App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This **Exhibition Curator App** is built using React and allows users to search artworks, filter by creation year, and sort results alphabetically. Users can also save items in a temporary exhibition for the duration of their session. The application integrates with the Met Museum API and the Art Institute of Chicago API to display and explore artworks.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Search Artworks:** Users can search for artworks using keywords from multiple museum collections.
+- **Filter by Year:** Filter artworks based on the creation year range.
+- **Sort by Alphabet:** Sort artworks by title either in ascending or descending order.
+- **Temporary Exhibition:** Users can add artworks to a temporary exhibition collection, which is saved locally for the session.
+- **Responsive Design:** The app is optimized for mobile and desktop use.
 
-### `npm start`
+## Technologies Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend:** React
+- **APIs:**
+  - Met Museum API
+  - Art Institute of Chicago API
+- **State Management:** React hooks
+- **Styles:** CSS, Styled Components
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+To get started with the project, follow these steps:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the repository:**
 
-### `npm run build`
+   ```bash
+   git clone https://github.com/SoliferNN914/Exhibition-Curator.git
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Navigate to the project directory:**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   cd Exhibition-Curator
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Install dependencies:**
 
-### `npm run eject`
+   Ensure you have [Node.js](https://nodejs.org/en/download/) installed. Then, run the following command to install the project dependencies:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   ```bash
+   npm install
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. **Start the application:**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   To start the app on your local development server:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   ```bash
+   npm start
+   ```
 
-## Learn More
+5. **Access the app:**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   Once the app is running, open your browser and go to:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```
+   http://localhost:3000
+   ```
 
-### Code Splitting
+## API Integration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Met Museum API:** 
+  The app fetches artworks using the Met Museum API, including filters by creation date and results with images.
+  
+- **Art Institute of Chicago API:** 
+  Artworks from the Art Institute of Chicago are fetched and displayed, with server-side date filtering applied.
 
-### Analyzing the Bundle Size
+## How to Use
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. **Search Artworks:**
+   - Enter a keyword into the search bar to find relevant artworks.
+   
+2. **Filter by Year:**
+   - Input a start year and end year to filter artworks created within that range.
 
-### Making a Progressive Web App
+3. **Sort Results:**
+   - Use the sort options to arrange artworks alphabetically, either ascending (A-Z) or descending (Z-A).
+   
+4. **Save to Temporary Exhibition:**
+   - Click on the artwork to add it to your temporary exhibition. This selection will persist only during your current session.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Future Improvements
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **User Authentication:** Save exhibitions permanently by allowing users to log in and store their collections in a backend database.
+- **Enhanced Filtering:** Add additional filters such as medium, artist, or museum collection.
