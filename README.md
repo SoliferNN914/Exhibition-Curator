@@ -1,6 +1,6 @@
 # Exhibition Curator App
 
-This **Exhibition Curator App** is built using React and allows users to search artworks, filter by creation year, and sort results alphabetically. Users can also save items in a temporary exhibition for the duration of their session. The application integrates with the Met Museum API and the Art Institute of Chicago API to display and explore artworks.
+This **Exhibition Curator App** is built using React and allows users to search artworks, filter by creation year, and sort results alphabetically. Users can also save items in a temporary exhibition for the duration of their session. The application integrates with the Met Museum API and the Art Institute of Chicago API to display and explore artworks. Default results will be associated with flowers, so that user can browse and expand exhibition as soon as the app loads.
 
 ## Features
 
